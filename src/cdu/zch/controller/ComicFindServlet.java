@@ -1,7 +1,9 @@
 package cdu.zch.controller;
 
-import cdu.zch.service.CommentService;
-import cdu.zch.service.impl.CommentServiceImpl;
+import cdu.zch.model.Comic;
+import cdu.zch.service.ComicService;
+import cdu.zch.service.impl.ComicServiceImpl;
+import com.google.gson.Gson;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,23 +12,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
-@WebServlet("/comic/delComment")
-public class CommentDelServlet extends HttpServlet {
+@WebServlet("/list")
+public class ComicFindServlet extends HttpServlet {
+
+    ComicService comicService = new ComicServiceImpl();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
         PrintWriter out = resp.getWriter();
-        String id=req.getParameter("id");
-        CommentService commentService=new CommentServiceImpl();
-        if (commentService.deleteComment(Integer.parseInt(id))==1){
-            out.write("true");
-//            resp.sendRedirect("list");
-        }else {
-            out.write("false");
-//            System.out.println("没删除");
-        }
-    }
 
+        String region = req.getParameter("region");
+//        System.out.println(region);
+        List<Comic> comicList = comicService.getComic(region);
+
+        String json = new Gson().toJson(comicList);
+        out.write(json);
+    }
 }
